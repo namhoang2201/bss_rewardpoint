@@ -1,0 +1,35 @@
+<?php
+/**
+ * @var Bss\RewardPoint\Block\Customer\PointShowing
+ */
+//  @codingStandardsIgnoreFile
+?>
+<?php
+$pointIconUrl = $block->getPointIconUrl();
+if (!empty($pointIconUrl)) :
+?>
+<style type="text/css">
+    .reward-point-message span {
+        margin-left: 30px;
+        display: inline-block;
+    }
+    .reward-point-message:before {
+        background-image: url("<?= $pointIconUrl ?>");
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        content: "";
+        position: absolute;
+    }
+    .reward-point-message {
+        position:relative;
+    }
+</style>
+<?php endif; ?>
+<?php if($block->customerLoggedIn() && $block->isShowPointInHeader()): ?>
+    <li class="reward-point-message">
+        <span>
+            <?= __("You have %1 points", $block->getPointToShow()) ?>
+        </span>
+    </li>
+<?php endif; ?>
