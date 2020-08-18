@@ -73,6 +73,11 @@ class GetModuleConfigs implements ResolverInterface
             } else {
                 $maximumThreshold = null;
             }
+            if (isset($configs['general']['expire_day'])) {
+                $expireDay = $configs['general']['expire_day'];
+            } else {
+                $expireDay = null;
+            }
             if (isset($configs['general']['maximum_earn_order'])) {
                 $maximumEarnOrder = $configs['general']['maximum_earn_order'];
             } else {
@@ -91,7 +96,7 @@ class GetModuleConfigs implements ResolverInterface
             $result['active'] = (int) $configs['general']['active'];
             $result['redeem_threshold'] = $configs['general']['redeem_threshold'];
             $result['maximum_threshold'] = $maximumThreshold;
-            $result['expire_day'] = $configs['general']['expire_day'];
+            $result['expire_day'] = $expireDay;
             $result['earn_tax'] = $configs['earning_point']['earn_tax'];
             $result['earn_shipping'] = $configs['earning_point']['earn_shipping'];
             $result['earn_order_paid'] = $configs['earning_point']['earn_order_paid'];
@@ -136,3 +141,4 @@ class GetModuleConfigs implements ResolverInterface
         );
     }
 }
+

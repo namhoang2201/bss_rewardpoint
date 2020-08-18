@@ -162,14 +162,15 @@ class RewardPointManagement implements RewardPointManagementInterface
             $response['spend_point'] = 0;
             $response['amount'] = 0;
             $response['pointLeft'] = $total_points;
-        } else {
+	} else {
+	$spend_point = $point;
             if ($maximum_spend_point > 0 && $point > $maximum_spend_point) {
                 $response['message'] = __("You can't use more reward point than you have");
                 $response['status_message']  = 'warning';
                 $spend_point = $maximum_spend_point;
             }
 
-            if ($spend_point > $total_points) {
+            if ($point > $total_points) {
                 $response['message'] = __("You can't use more reward point than the order amount.");
                 $response['status_message']  = 'warning';
                 $spend_point = $total_points;

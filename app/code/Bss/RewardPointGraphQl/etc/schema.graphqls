@@ -92,7 +92,7 @@ type Mutation {
 }
 
 input applyRewardPointInput {
-    cart_id: Int @doc(description: "The unique ID that identifies the customer's cart")
+    cart_id: String @doc(description: "The unique ID that identifies the customer's cart")
     amount: Int @doc(description: "The amount of reward points")
 }
 

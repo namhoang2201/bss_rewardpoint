@@ -25,6 +25,7 @@ use Magento\Framework\GraphQl\Query\Resolver\ContextInterface;
 use Magento\Framework\GraphQl\Query\Resolver\Value;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
+use Magento\Quote\Model\MaskedQuoteIdToQuoteIdInterface;
 
 /**
  * Class ApplyRewardPoint
@@ -49,19 +50,27 @@ class ApplyRewardPoint implements ResolverInterface
     protected $quoteFactory;
 
     /**
+     * @var MaskedQuoteIdToQuoteIdInterface
+     */
+    private $maskedQuoteIdToQuoteId;
+
+    /**
      * ApplyRewardPoint constructor.
      * @param \Magento\Quote\Model\QuoteFactory $quoteFactory
      * @param \Bss\RewardPoint\Model\RewardPointManagement $rewardPointManagement
      * @param \Magento\Framework\Json\Helper\Data $jsonHelper
+     * @param MaskedQuoteIdToQuoteIdInterface $maskedQuoteIdToQuoteId
      */
     public function __construct(
         \Magento\Quote\Model\QuoteFactory $quoteFactory,
         \Bss\RewardPoint\Model\RewardPointManagement $rewardPointManagement,
-        \Magento\Framework\Json\Helper\Data $jsonHelper
+        \Magento\Framework\Json\Helper\Data $jsonHelper,
+        MaskedQuoteIdToQuoteIdInterface $maskedQuoteIdToQuoteId
     ) {
         $this->rewardPointManagement = $rewardPointManagement;
         $this->jsonHelper = $jsonHelper;
         $this->quoteFactory = $quoteFactory;
+        $this->maskedQuoteIdToQuoteId = $maskedQuoteIdToQuoteId;
     }
 
     /**
@@ -85,14 +94,14 @@ class ApplyRewardPoint implements ResolverInterface
         if (empty($args['input']['cart_id'])) {
             throw new GraphQlInputException(__('Required parameter "cart_id" is missing'));
         }
-        $quoteId = $args['input']['cart_id'];
-
-        if (empty($args['input']['amount'])) {
+        $cartHash = $args['input']['cart_id'];
+        $quoteId= $this->maskedQuoteIdToQuoteId->execute($cartHash);
+	if (empty($args['input']['amount'])) {
             throw new GraphQlInputException(__('Required parameter "amount" is missing'));
         }
         $amount = $args['input']['amount'];
         $storeId = (int)$context->getExtensionAttributes()->getStore()->getId();
-        $quote = $this->quoteFactory->create()->load($quoteId);
+	$quote = $this->quoteFactory->create()->load($quoteId);
         if ($quote->getCustomer()->getId() == $customer && $quote->getStore()->getId() == $storeId) {
             $response = $this->rewardPointManagement->apply($amount, $quote);
             if ($response) {
@@ -112,3 +121,4 @@ class ApplyRewardPoint implements ResolverInterface
         return ['cart' => $result];
     }
 }
+
